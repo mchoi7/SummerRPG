@@ -10,7 +10,7 @@ package summerrpg;
  *
  * @author michaelchoi
  */
-public class SummerRPG {
+public class Driver {
 
     /**
      * @param args the command line arguments
