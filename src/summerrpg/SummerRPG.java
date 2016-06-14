@@ -8,7 +8,7 @@ package summerrpg;
 
 /**
  *
- * @author michaelchoi
+ * @author danielkim
  */
 public class SummerRPG {
 
