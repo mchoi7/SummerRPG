@@ -29,8 +29,8 @@ public class GameFrame extends JFrame implements Runnable{
         if(sleepTime > 0) { // if there is time left to sleep in a frame, sleep the difference until next frame
             try {
                 Thread.sleep(sleepTime);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(GameFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException e) {
+                System.out.println("Sleep error: " + e.getMessage());
             }
         }
     }

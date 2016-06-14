@@ -6,24 +6,24 @@ import java.util.ArrayList;
 public class InstanceManager {
     public static InstanceManager res = new InstanceManager();
     
-    private List<Instance> fluidInstance;
-    private List<Instance> fixedInstance;
+    private final List<Instance> fluidInstanceList;
+    private final List<Instance> fixedInstanceList;
     
     private InstanceManager() {
-        fluidInstance = new ArrayList<>();
-        fixedInstance = new ArrayList<>();
+        fluidInstanceList = new ArrayList<>();
+        fixedInstanceList = new ArrayList<>();
     }
     
     public void addInstance(Instance instance, boolean fixed) {
         if(fixed) {
-            fixedInstance.set(instance.getX() + GameFrame.WIDTH*instance.getY(), instance);
+            fixedInstanceList.set((int) instance.getX() + (int) instance.getY()*GameFrame.WIDTH, instance);
         } else {
-            fluidInstance.add(instance);
+            fluidInstanceList.add(instance);
         }
     }
     
     public boolean removeInstance(Instance instance) {
-        if(fluidInstance.remove(instance) || fixedInstance.remove()) {
+        if(fluidInstanceList.remove(instance) || fixedInstanceList.remove()) {
             return true;
         } else {
             return false;
@@ -31,8 +31,8 @@ public class InstanceManager {
     }
     
     public void clear() {
-        fluidInstance.clear();
-        fixedInstance.clear();
+        fluidInstanceList.clear();
+        fixedInstanceList.clear();
     }
     
     public void update() {
