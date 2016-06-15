@@ -14,17 +14,17 @@ public class SpriteManager {
     
     private SpriteManager() {
         spriteMap = new HashMap<>();
-        addSprite("strawberry");
+        addSprite("test");
     }
     
     private void addSprite(String spriteIndex) {
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File(/*filepath???*/));
-            spriteMap.put(spriteIndex, new Sprite(image));
+            image = ImageIO.read(new File(spriteIndex + ".png"));
         } catch(IOException e) {
             System.out.println("Read error: " + e.getMessage());
         }
+        spriteMap.put(spriteIndex, new Sprite(/*images[]*/));
     }
     
     public Sprite getSprite(String spriteIndex) {

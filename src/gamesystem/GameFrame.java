@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 
-public class GameFrame extends JFrame implements Runnable{
+public class GameFrame extends JFrame implements Runnable {
     public static final int WIDTH = 500, HEIGHT = 500, FPS = 60;
     public static final String TITLE = "SummerRPG";
     boolean running = false;

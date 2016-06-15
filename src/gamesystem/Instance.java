@@ -1,5 +1,7 @@
 package gamesystem;
 
+import java.awt.Graphics;
+
 public class Instance {
 	private double x, dx, ddx;	// physics
 	private double y, dy, ddy;
@@ -32,9 +34,9 @@ public class Instance {
 	public int getDepth() {return depth;}
 	public double getImageXScale() {return imageXScale;}
 	public double getImageYScale() {return imageYScale;}
-	public boolean getSolid() {return solid;}
-	public boolean getActive() {return active;}
-	public boolean getVisible() {return visible;}
+	public boolean isSolid() {return solid;}
+	public boolean isActive() {return active;}
+	public boolean isVisible() {return visible;}
 
 	// setters
 	public void setX(double value) {x= value;}
@@ -53,7 +55,8 @@ public class Instance {
 	public void setActive(boolean value) {active= value;}
 	public void setVisible(boolean value) {visible= value;}
 	
-	public void collision() {}
+	private void collides() {}
+	private boolean isIntersecting() {return true;}
 	
 	public void update() {
 		// physics
@@ -61,5 +64,5 @@ public class Instance {
 		x += dx; y += ddy;
 	}
 	
-	public void paint() {}
+	public void paint(Graphics g) {}
 }
