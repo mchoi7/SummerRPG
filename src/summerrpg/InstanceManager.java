@@ -1,10 +1,11 @@
 package summerrpg;
 
+import java.awt.Graphics;
 import java.util.List;
 import java.util.ArrayList;
 
 public class InstanceManager {
-    public static InstanceManager res = new InstanceManager();
+    private static InstanceManager res = new InstanceManager();
     
     private final List<Instance> fluidInstanceList;
     private final List<Instance> fixedInstanceList;
@@ -14,32 +15,39 @@ public class InstanceManager {
         fixedInstanceList = new ArrayList<>();
     }
     
-    public void addInstance(Instance instance, boolean fixed) {
+    public static void addInstance(Instance instance, boolean fixed) {
         if(fixed) {
-            fixedInstanceList.set((int) instance.getX() + (int) instance.getY()*GameFrame.WIDTH, instance);
+            res.fixedInstanceList.set((int) instance.getX() + (int) instance.getY()*GameFrame.WIDTH, instance);
         } else {
-            fluidInstanceList.add(instance);
+            res.fluidInstanceList.add(instance);
         }
     }
     
-    public boolean removeInstance(Instance instance) {
-        if(fluidInstanceList.remove(instance) || fixedInstanceList.remove()) {
-            return true;
-        } else {
-            return false;
+    public static boolean removeInstance(Instance instance) {
+        return res.fluidInstanceList.remove(instance) || res.fixedInstanceList.remove(instance);
+    }
+    
+    public static void clear() {
+        res.fluidInstanceList.clear();
+        res.fixedInstanceList.clear();
+    }
+    
+    public static void update() {
+        for(Instance instance : res.fluidInstanceList) {
+            instance.update();
         }
     }
     
-    public void clear() {
-        fluidInstanceList.clear();
-        fixedInstanceList.clear();
-    }
-    
-    public void update() {
-        
-    }
-    
-    public void render() {
-        
+    public static void paint(Graphics g) {
+
+        // TESTING
+        Sprite sprite = SpriteManager.getSprite("sample");
+        if(sprite != null) sprite.paint(g, 100, 100, 0);
+        // TESTING
+
+        for(Instance instance : res.fluidInstanceList)
+            instance.render();
+        for(Instance instance : res.fixedInstanceList)
+            instance.render();
     }
 }

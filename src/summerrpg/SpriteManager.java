@@ -1,33 +1,41 @@
 package summerrpg;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.ImageIO;
 
 public class SpriteManager {
-    public static SpriteManager res = new SpriteManager();
-    
+    private static SpriteManager res = new SpriteManager();
+
     private final Map<String, Sprite> spriteMap;
     
     private SpriteManager() {
         spriteMap = new HashMap<>();
-        addSprite("test");
+        addSprite("sample", 2);
     }
     
-    private void addSprite(String spriteIndex) {
-        BufferedImage image = null;
+    private void addSprite(String spriteIndex, int imageNumber) {
+        BufferedImage imageSheet = null;
         try {
-            image = ImageIO.read(new File(spriteIndex + ".png"));
+            imageSheet = ImageIO.read(new File("src/images/" + spriteIndex + ".png"));
         } catch(IOException e) {
-            System.out.println("Read error: " + e.getMessage());
+            System.out.println("Image error: " + e.getMessage());
+            return;
         }
-        spriteMap.put(spriteIndex, new Sprite(/*images[]*/));
+
+        BufferedImage[] images = new BufferedImage[imageNumber];
+        int width = imageSheet.getWidth() / imageNumber;
+        int height = imageSheet.getHeight();
+        for(int imageIndex = 0; imageIndex < imageNumber; imageIndex++)
+            images[imageIndex] = imageSheet.getSubimage(imageIndex * width, 0, width, height);
+
+        spriteMap.put(spriteIndex, new Sprite(images));
     }
     
-    public Sprite getSprite(String spriteIndex) {
-        return spriteMap.get(spriteIndex);
+    public static Sprite getSprite(String spriteIndex) {
+        return res.spriteMap.get(spriteIndex);
     }
 }
