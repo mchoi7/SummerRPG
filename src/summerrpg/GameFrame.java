@@ -6,25 +6,46 @@ import javax.swing.*;
 public class GameFrame extends JFrame implements Runnable{
     public static final int WIDTH = 960, HEIGHT = 640, FPS = 60;
     private static final long targetTime = 1000 / FPS;
-    private boolean running = true, pause = false;
-    
+
+    /*====================================*/
+    /*---------------Fields---------------*/
+
+    private boolean running, pause;
+
+    /*====================================*/
+    /*-------------Constructor------------*/
+
     public GameFrame() {
         super("SummerRPG");
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
-        setVisible(true);
         setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        new Thread(this).start();
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setVisible(true);
+        createBufferStrategy(3);
+        start();
     }
-    
+
+    private synchronized void start() {
+        new Thread(this).start();
+        running = true;
+    }
+
+    private synchronized void stop() {
+        running = false;
+    }
+
+    /*====================================*/
+    /*--------------Actions---------------*/
+
     public void run() {
+
+        new Instance(100, 100, InstanceManager.FLUID);
+
         while(running) {
             long startTime = System.currentTimeMillis();
-
             if (!pause) InstanceManager.update();
-            paint(getGraphics());
+            render();
 
             long sleepTime = targetTime - System.currentTimeMillis() + startTime;
             if (sleepTime > 0) {
@@ -37,8 +58,11 @@ public class GameFrame extends JFrame implements Runnable{
         }
     }
 
-    public void paint(Graphics g) {
-        super.paint(g);
-        InstanceManager.paint(g);
+    public void render() {
+        Graphics g = getBufferStrategy().getDrawGraphics();
+        g.clearRect(0, 0, WIDTH, HEIGHT);
+        InstanceManager.render(g);
+        g.dispose();
+        getBufferStrategy().show();
     }
 }
