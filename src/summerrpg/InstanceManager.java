@@ -5,80 +5,71 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class InstanceManager {
-    public static final int FLUID = 0, FIXED = 1, TRIVIAL = 2, INTERFACE = 3;
     private static InstanceManager res = new InstanceManager();
 
     /*====================================*/
     /*---------------Fields---------------*/
 
-    private final List<Instance> fixedInstanceList;
-    private final List<Instance> fluidInstanceList;
-    private final List<Instance> trivialInstanceList;
-    private final List<Instance> interfaceInstanceList;
+    private final List<Instance> instanceList;
+    private Instance[][] instanceArray;
 
     /*====================================*/
     /*-------------Constructor------------*/
 
     private InstanceManager() {
-        fluidInstanceList = new ArrayList<>();
-        fixedInstanceList = new ArrayList<>();
-        trivialInstanceList = new ArrayList<>();
-        interfaceInstanceList = new ArrayList<>();
+        instanceList = new ArrayList<>();
+        instanceArray = new Instance[64][64];
     }
-    
-    public static void add(Instance instance, int type) {
-        switch (type) {
-            case FLUID:
-                res.fluidInstanceList.add(instance);
-                break;
-            case FIXED:
-                res.fixedInstanceList.set((int) (instance.getX() + instance.getY()*LevelManager.getWidth()), instance);
-                break;
-            case TRIVIAL:
-                res.trivialInstanceList.add(instance);
-                break;
-            case INTERFACE:
-                res.interfaceInstanceList.add(instance);
-                break;
-        }
+
+    public static void add(Instance instance) {
+        res.instanceList.add(instance);
     }
-    
+
+    public static void add(Instance instance, double x, double y) {
+        res.instanceArray[(int) (x / 16)][(int) (y / 16)] = instance;
+    }
+
     public static boolean remove(Instance instance) {
-        return res.fixedInstanceList.remove(instance) || res.fluidInstanceList.remove(instance) || res.trivialInstanceList.remove(instance) || res.interfaceInstanceList.remove(instance);
+        return res.instanceList.remove(instance);
+    }
+
+    public static boolean remove(Instance instance, double x, double y) {
+        int xIndex = (int) (x / 16);
+        int yIndex = (int) (y / 16);
+        if(res.instanceArray[xIndex][yIndex] != null) {
+            res.instanceArray[xIndex][yIndex] = null;
+            return true;
+        }
+        return false;
     }
 
     public static void clear() {
-        res.fluidInstanceList.clear();
-        res.fixedInstanceList.clear();;
-        res.trivialInstanceList.clear();;
-        res.interfaceInstanceList.clear();
+        res.instanceList.clear();
     }
     
     public static void update() {
-        for(Instance instance : res.fluidInstanceList)
-            instance.update();
-        for(Instance instance : res.trivialInstanceList)
-            instance.update();
-        for(Instance instance : res.interfaceInstanceList)
+        for(Instance instance : res.instanceList)
             instance.update();
     }
 
-    public static List<Instance> getFixedInstanceList() {
-        return res.fixedInstanceList;
+    public static List<Instance> getInstanceList() {
+        return res.instanceList;
     }
 
-    public static List<Instance> getFluidInstanceList() {
-        return res.fluidInstanceList;
+    public static Instance getInstance(double x, double y) {
+        try {
+            return res.instanceArray[(int) (x / 16)][(int) (y / 16)];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     public static void render(Graphics g) {
-        for(Instance instance : res.fixedInstanceList)
-            instance.render(g);
-        for(Instance instance : res.fluidInstanceList)
-            instance.render(g);
-        for(Instance instance : res.trivialInstanceList)
-            instance.render(g);
-        for(Instance instance : res.interfaceInstanceList)
+        for(int y = 0; y < res.instanceArray.length; y++)
+            for(int x = 0; x < res.instanceArray[0].length; x++)
+                if(res.instanceArray[x][y] != null)
+                    res.instanceArray[x][y].render(g);
+        for(Instance instance : res.instanceList)
             instance.render(g);
     }
 }

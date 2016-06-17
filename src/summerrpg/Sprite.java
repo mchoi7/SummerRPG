@@ -8,21 +8,23 @@ public class Sprite {
     /*====================================*/
     /*---------------Fields---------------*/
 
-    private BufferedImage[] images;
-    private int imageNumber;
+    private BufferedImage[] image;
+    private int xOffset, yOffset, imageNumber;
 
     /*====================================*/
     /*-------------Constructor------------*/
 
-    public Sprite(BufferedImage[] images) {
-        this.images = images;
-        imageNumber = images.length;
+    public Sprite(BufferedImage[] image) {
+        this.image = image;
+        xOffset = image[0].getWidth() / 2;
+        yOffset = image[0].getHeight() / 2;
+        imageNumber = image.length;
     }
 
     /*====================================*/
     /*--------------Actions---------------*/
 
     public void paint(Graphics g, double x, double y, double imageIndex) {
-        g.drawImage(images[(int) imageIndex % imageNumber], (int) x, (int) y, null);
+        g.drawImage(image[(int) imageIndex % imageNumber], (int) x - xOffset, (int) y - yOffset, null);
     }
 }

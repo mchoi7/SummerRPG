@@ -1,6 +1,8 @@
 package summerrpg;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.*;
 
 public class GameFrame extends JFrame implements Runnable{
@@ -22,7 +24,10 @@ public class GameFrame extends JFrame implements Runnable{
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+
+        InputManager.register(this);
         createBufferStrategy(3);
+
         start();
     }
 
@@ -40,11 +45,15 @@ public class GameFrame extends JFrame implements Runnable{
 
     public void run() {
 
-        new Instance(100, 100, InstanceManager.FLUID);
+        Instance player = new Instance(100, 100);
+        player.setPlayer();
+        Instance block = new Instance(150, 100);
+        block.setBlock();
 
         while(running) {
             long startTime = System.currentTimeMillis();
-            if (!pause) InstanceManager.update();
+
+            update();
             render();
 
             long sleepTime = targetTime - System.currentTimeMillis() + startTime;
@@ -58,7 +67,11 @@ public class GameFrame extends JFrame implements Runnable{
         }
     }
 
-    public void render() {
+    private void update() {
+        if (!pause) InstanceManager.update();
+    }
+
+    private void render() {
         Graphics g = getBufferStrategy().getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
         InstanceManager.render(g);

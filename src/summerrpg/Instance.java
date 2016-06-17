@@ -11,8 +11,8 @@ public class Instance {
     private double x, dx, mdx, iddx, ddx, fddx;
     private double y, dy, mdy, iddy, ddy, fddy;
     private double width, height;
-    private boolean active, visible, solid, hard;
-    private double input[] = new double[8];
+    private boolean active, visible, solid, fixed;
+    private boolean input[] = new boolean[256];
     private String spriteIndex;
     private int imageIndex, imageSpeed;
     private double imageXScale, imageYScale;
@@ -20,17 +20,44 @@ public class Instance {
     /*====================================*/
     /*-------------Constructor------------*/
 
-    public Instance(double x, double y, int type) {
+    public Instance(double x, double y) {
         this.x = x;
         this.y = y;
+
+        InstanceManager.add(this);
+    }
+
+    public void setBasic() {
         active = true;
         visible = true;
-        InstanceManager.add(this, type);
-        input[1] = 100;
-        iddx = 0.01;
-        iddy = 3;
+        solid = true;
+
+        width = 16;
+        height = 16;
+
+        spriteIndex = "sample";
+    }
+
+    public void setBlock() {
+        setBasic();
+
+        fixed = true;
+        InstanceManager.remove(this);
+        InstanceManager.add(this, x, y);
+    }
+
+    public void setPlayer() {
+        setBasic();
+
+        iddx = 0.3;
+        iddy = 0.3;
+
+        fddx = -0.1;
+        fddy = -0.1;
+
         mdx = 3;
         mdy = 3;
+
     }
 
     /*====================================*/
@@ -60,38 +87,48 @@ public class Instance {
     /*---------------Update---------------*/
 
     private void registerInput() {
-        dx += (input[1] > 10 ? iddx : 0) - (input[3] > 10 ? iddx : 0); // Standard Input Commands Applies Input Acceleration Forces
-        dy += (input[2] > 10 ? iddy : 0) - (input[0] > 10 ? iddy : 0);
+        input = InputManager.getInput();
+        dx += (input['D'] ? iddx : 0) - (input['A'] ? iddx : 0); // Standard Input Commands Applies Input Acceleration Forces
+        dy += (input['S'] ? iddy : 0) - (input['W'] ? iddy : 0);
     }
 
     private void applyPhysics() {
-        dx += signum(dx) * fddx + ddx; // Apply Feedback Acceleration And Normal Acceleration To Velocity
-        dy += signum(dy) * fddy + ddy;
+        dx = (abs(dx) > -fddx ? dx + signum(dx) * fddx : 0) + ddx; // Apply Feedback Acceleration And Normal Acceleration To Velocity
+        dy = (abs(dy) > -fddy ? dy + signum(dy) * fddy : 0) + ddy;
+
         dx = abs(dx) > mdx ? signum(dx) * mdx : dx; // Limit Maximum Acceleration
         dy = abs(dy) > mdy ? signum(dy) * mdy : dy;
     }
 
     private void move(double dx, double dy) {
-        if(solid && !hard) {
-            x += dx;
+        if(solid && !fixed) {
             Instance block;
-            block = InstanceManager.getFixedInstanceList().get((int) (x + y*LevelManager.getWidth()));
-            if(block != null && this.isIntersecting(block))
-                x = block.getX() - signum(block.getX() - x) * (width + block.getWidth()) / 2;
-            for(Instance instance : InstanceManager.getFluidInstanceList())
-                if(this.isIntersecting(instance)) {
-                    double distance = instance.getX() - x;
-                    dx -= 2 * iddx * (signum(distance) - 2 * distance / (width + instance.getWidth()));
+
+            x += dx;
+
+            for(double j = -height; j <= height; j += height)
+                for(double i = -width; i <= width; i += width) {
+                    block = InstanceManager.getInstance(x + i, y + j);
+                    if(block != null && this.isIntersecting(block)) {
+                        x = block.getX() - signum(block.getX() - x) * (width + block.getWidth()) / 2;
+                    }
                 }
             y += dy;
-            block = InstanceManager.getFixedInstanceList().get((int) (x + y*LevelManager.getWidth()));
-            if(block != null && this.isIntersecting(block))
-                y = block.getY() - signum(block.getY() - y) * (height + block.getHeight()) / 2;
-            for(Instance instance : InstanceManager.getFluidInstanceList())
-                if(this.isIntersecting(instance)) {
-                    double distance = instance.getY() - y;
-                    dy -= 2 * iddy * (signum(distance) - 2 * distance / (height + instance.getHeight()));
+
+            for(double j = -height; j <= height; j += height)
+                for(double i = -width; i <= width; i += width) {
+                    block = InstanceManager.getInstance(x + i, y + j);
+                    if (block != null && this.isIntersecting(block))
+                        y = block.getY() - signum(block.getY() - y) * (height + block.getHeight()) / 2;
                 }
+
+            for(Instance instance : InstanceManager.getInstanceList())
+                if(this != instance && this.isIntersecting(instance)) {
+                    double angle = atan2(instance.getY() - y, instance.getX() - x);
+                    this.dx -= 0.5 * iddx * cos(angle);
+                    this.dy -= 0.5 * iddy * sin(angle);
+                }
+
         } else {
             x += dx;
             y += dy;
@@ -99,7 +136,7 @@ public class Instance {
     }
 
     private boolean isIntersecting(Instance instance) {
-        return 2 * (instance.getX() - x) < width + instance.getWidth() && 2 * (instance.getY() - y) < height + instance.getHeight();
+        return 2 * abs(instance.getX() - x) < (width + instance.getWidth()) && 2 * abs(instance.getY() - y) < (height + instance.getHeight());
     }
 
     private void calculateState() {
@@ -110,8 +147,6 @@ public class Instance {
     }
 
     protected void calculateSprite() {
-        //TEMPORARY
-        spriteIndex = "sample";
     }
 
     /*====================================*/
@@ -145,14 +180,10 @@ public class Instance {
         return solid;
     }
 
-    public boolean isHard() {
-        return hard;
+    public boolean isFixed() {
+        return fixed;
     }
 
     /*====================================*/
     /*---------------Mutator--------------*/
-
-    public void setInput(double input[]) {
-        this.input = input;
-    }
 }
