@@ -18,7 +18,7 @@ public class GameFrame extends JFrame implements Runnable, KeyListener {
     /*====================================*/
     /*-------------Constructor------------*/
 
-    public GameFrame() {
+    private GameFrame() {
         super("SummerRPG");
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
@@ -34,6 +34,10 @@ public class GameFrame extends JFrame implements Runnable, KeyListener {
 
     /*====================================*/
     /*--------------Actions---------------*/
+
+    public static void main(String[] args) {
+        new GameFrame();
+    }
 
     public void run() {
 
