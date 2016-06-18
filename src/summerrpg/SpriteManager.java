@@ -21,12 +21,13 @@ class SpriteManager {
     private SpriteManager() {
         spriteMap = new HashMap<>();
         addSprite("sample", 1);
+        addSprite("timer", 16);
     }
     
     private void addSprite(String spriteIndex, int imageNumber) {
         BufferedImage imageSheet;
         try {
-            imageSheet = ImageIO.read(new File("src/resources/" + spriteIndex + ".png"));
+            imageSheet = ImageIO.read(new File("src/resources/sprites/" + spriteIndex + ".png"));
         } catch(IOException e) {
             System.out.println("Image error: " + e.getMessage());
             return;

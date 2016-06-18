@@ -8,14 +8,20 @@ class Instance {
     /*====================================*/
     /*---------------Fields---------------*/
 
-    private double x, dx, mdx, ddx, fddx;
-    private double y, dy, mdy, ddy, fddy;
-    private double[] dds = new double[4];
+    protected enum State {
+        Idle
+    }
+    private int stateIndex;
+
+    private double x, y, dx, dy;
+    private double[] mdx, ddx, fddx, mdy, ddy, fddy;
+    private double[][] dds;
+
     private double width, height, depth, weight;
     private boolean active, visible, solid, fixed;
-    private boolean key[] = new boolean[256];
+    private boolean key[];
     private String spriteIndex;
-    private int imageIndex, imageSpeed;
+    private double imageIndex, imageSpeed;
     private double imageXScale, imageYScale;
 
     /*====================================*/
@@ -25,28 +31,42 @@ class Instance {
         this.x = x;
         this.y = y;
 
+        int stateSize = State.values().length;
+
+        key = new boolean[256];
+        dds = new double[stateSize][4];
+        mdx = new double[stateSize];
+        ddx = new double[stateSize];
+        fddx = new double[stateSize];
+
+        mdy = new double[stateSize];
+        ddy = new double[stateSize];
+        fddy = new double[stateSize];
+
         InstanceManager.add(this);
     }
 
-    void setBasic() {
+    private void setBasic() {
         active = true;
         visible = true;
         solid = true;
 
-        spriteIndex = "sample";
+        spriteIndex = "timer";
         imageXScale = 1;
         imageYScale = 1;
-
-        fddx = -0.25;
-        fddy = -0.25;
+        
         width = 16;
         height = 16;
         depth = 0;
         weight = 1;
+        
+        fddx[State.Idle.ordinal()] = -0.25;
+        fddy[State.Idle.ordinal()] = -0.25;
     }
 
     void setHard() {
         setBasic();
+        imageSpeed = random();
 
         fixed = true;
         InstanceManager.remove(this);
@@ -56,18 +76,19 @@ class Instance {
     void setSoft() {
         setBasic();
 
-        mdx = 3;
-        mdy = 3;
+        mdx[State.Idle.ordinal()] = 3;
+        mdy[State.Idle.ordinal()] = 3;
     }
 
     void setPlayer() {
         setSoft();
 
         weight = 1;
-        dds[0] = .5;
-        dds[1] = .5;
-        dds[2] = .5;
-        dds[3] = .5;
+        imageSpeed = 0.5;
+        dds[State.Idle.ordinal()][0] = .5;
+        dds[State.Idle.ordinal()][1] = .5;
+        dds[State.Idle.ordinal()][2] = .5;
+        dds[State.Idle.ordinal()][3] = .5;
     }
 
     /*====================================*/
@@ -75,21 +96,22 @@ class Instance {
 
     void update() {
         if(active) {
-
+            
             // Apply Normal Acceleration
-            dx += ddx;
-            dy += ddy;
+            dx += ddx[stateIndex];
+            dy += ddy[stateIndex];
 
             // Apply Feedback Acceleration
-            dx = (abs(dx) > -fddx ? dx + signum(dx) * fddx : 0);
-            dy = (abs(dy) > -fddy ? dy + signum(dy) * fddy : 0);
+            dx = (abs(dx) > -fddx[stateIndex] ? dx + signum(dx) * fddx[stateIndex] : 0);
+            dy = (abs(dy) > -fddy[stateIndex] ? dy + signum(dy) * fddy[stateIndex] : 0);
 
-            double iddx = (key['D'] ? dds[3] : 0) - (key['A'] ? dds[1] : 0);
-            double iddy = (key['S'] ? dds[2] : 0) - (key['W'] ? dds[0]: 0);
+            double iddx = (key['D'] ? dds[stateIndex][3] : 0) - (key['A'] ? dds[stateIndex][1] : 0);
+            double iddy = (key['S'] ? dds[stateIndex][2] : 0) - (key['W'] ? dds[stateIndex][0]: 0);
 
             // Apply Input Acceleration
-            dx = (signum(iddx) * (dx + iddx) <= mdx) ? dx + iddx : (abs(dx) < mdx ? signum(dx) * mdx : dx);
-            dy = (signum(iddy) * (dy + iddy) <= mdy) ? dy + iddy : (abs(dy) < mdy ? signum(dy) * mdy : dy);
+            dx = (signum(iddx) * (dx + iddx) <= mdx[stateIndex]) ? dx + iddx : (abs(dx) < mdx[stateIndex] ? signum(dx) * mdx[stateIndex] : dx);
+            dy = (signum(iddy) * (dy + iddy) <= mdy[stateIndex]) ? dy + iddy : (abs(dy) < mdy[stateIndex] ? signum(dy) * mdy[stateIndex] : dy);
+            
             move(dx, dy);
             calculateState();
         }
@@ -151,6 +173,9 @@ class Instance {
 
     private void calculateState() {
         String spriteIndex = this.spriteIndex;
+        
+        stateIndex = State.Idle.ordinal();
+        
         calculateSprite();
         if(spriteIndex != null && this.spriteIndex != null)
             imageIndex = spriteIndex.equals(this.spriteIndex) ? imageIndex + imageSpeed : 0;

@@ -20,6 +20,8 @@ class GameFrame extends JFrame implements Runnable, KeyListener {
 
     private GameFrame() {
         super("SummerRPG");
+        ImageIcon img = new ImageIcon("src/resources/icon.ico");
+        setIconImage(img.getImage());
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
         setResizable(false);
