@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.*;
 
-public class GameFrame extends JFrame implements Runnable{
+public class GameFrame extends JFrame implements Runnable, KeyListener {
     public static final int WIDTH = 960, HEIGHT = 640, FPS = 60;
     private static final long targetTime = 1000 / FPS;
 
@@ -13,6 +13,7 @@ public class GameFrame extends JFrame implements Runnable{
     /*---------------Fields---------------*/
 
     private boolean running, pause;
+    private boolean[] key = new boolean[128];
 
     /*====================================*/
     /*-------------Constructor------------*/
@@ -25,19 +26,10 @@ public class GameFrame extends JFrame implements Runnable{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
 
-        InputManager.register(this);
+        addKeyListener(this);
         createBufferStrategy(3);
 
         start();
-    }
-
-    private synchronized void start() {
-        new Thread(this).start();
-        running = true;
-    }
-
-    private synchronized void stop() {
-        running = false;
     }
 
     /*====================================*/
@@ -45,10 +37,7 @@ public class GameFrame extends JFrame implements Runnable{
 
     public void run() {
 
-        Instance player = new Instance(100, 100);
-        player.setPlayer();
-        Instance block = new Instance(150, 100);
-        block.setBlock();
+        LevelManager.loadLevel("levelOne");
 
         while(running) {
             long startTime = System.currentTimeMillis();
@@ -68,6 +57,7 @@ public class GameFrame extends JFrame implements Runnable{
     }
 
     private void update() {
+        if(InstanceManager.getPlayer() != null) InstanceManager.getPlayer().setKey(key);
         if (!pause) InstanceManager.update();
     }
 
@@ -77,5 +67,25 @@ public class GameFrame extends JFrame implements Runnable{
         InstanceManager.render(g);
         g.dispose();
         getBufferStrategy().show();
+    }
+
+    private synchronized void start() {
+        new Thread(this).start();
+        running = true;
+    }
+
+    private synchronized void stop() {
+        running = false;
+    }
+
+    public void keyPressed(KeyEvent e) {
+        key[e.getKeyCode()] = true;
+    }
+
+    public void keyReleased(KeyEvent e) {
+        key[e.getKeyCode()] = false;
+    }
+
+    public void keyTyped(KeyEvent e) {
     }
 }

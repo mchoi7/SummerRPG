@@ -12,7 +12,7 @@ public class Instance {
     private double y, dy, mdy, iddy, ddy, fddy;
     private double width, height;
     private boolean active, visible, solid, fixed;
-    private boolean input[] = new boolean[256];
+    private boolean key[] = new boolean[256];
     private String spriteIndex;
     private int imageIndex, imageSpeed;
     private double imageXScale, imageYScale;
@@ -32,8 +32,17 @@ public class Instance {
         visible = true;
         solid = true;
 
+        imageXScale = 1;
+        imageYScale = 1;
+
         width = 16;
         height = 16;
+
+        fddx = -0.1;
+        fddy = -0.1;
+
+        mdx = 3;
+        mdy = 3;
 
         spriteIndex = "sample";
     }
@@ -75,7 +84,7 @@ public class Instance {
     public void render(Graphics g) {
         if(visible) {
             Sprite sprite = SpriteManager.getSprite(spriteIndex);
-            if(sprite != null) sprite.paint(g, x, y, imageIndex);
+            if(sprite != null) sprite.paint(g, x, y, imageXScale, imageYScale, imageIndex);
         }
     }
 
@@ -87,9 +96,8 @@ public class Instance {
     /*---------------Update---------------*/
 
     private void registerInput() {
-        input = InputManager.getInput();
-        dx += (input['D'] ? iddx : 0) - (input['A'] ? iddx : 0); // Standard Input Commands Applies Input Acceleration Forces
-        dy += (input['S'] ? iddy : 0) - (input['W'] ? iddy : 0);
+        dx += (key['D'] ? iddx : 0) - (key['A'] ? iddx : 0); // Standard Input Commands Applies Input Acceleration Forces
+        dy += (key['S'] ? iddy : 0) - (key['W'] ? iddy : 0);
     }
 
     private void applyPhysics() {
@@ -109,17 +117,17 @@ public class Instance {
             for(double j = -height; j <= height; j += height)
                 for(double i = -width; i <= width; i += width) {
                     block = InstanceManager.getInstance(x + i, y + j);
-                    if(block != null && this.isIntersecting(block)) {
-                        x = block.getX() - signum(block.getX() - x) * (width + block.getWidth()) / 2;
-                    }
+                    if(block != null && this.isIntersecting(block))
+                        x = block.getX() - signum(dx) * (width + block.getWidth()) / 2;
                 }
+
             y += dy;
 
             for(double j = -height; j <= height; j += height)
                 for(double i = -width; i <= width; i += width) {
                     block = InstanceManager.getInstance(x + i, y + j);
                     if (block != null && this.isIntersecting(block))
-                        y = block.getY() - signum(block.getY() - y) * (height + block.getHeight()) / 2;
+                        y = block.getY() - signum(dy) * (height + block.getHeight()) / 2;
                 }
 
             for(Instance instance : InstanceManager.getInstanceList())
@@ -186,4 +194,8 @@ public class Instance {
 
     /*====================================*/
     /*---------------Mutator--------------*/
+
+    public void setKey(boolean[] key) {
+        this.key = key;
+    }
 }

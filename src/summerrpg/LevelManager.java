@@ -1,7 +1,10 @@
 package summerrpg;
 
+import java.io.*;
+
 public class LevelManager {
     private static LevelManager ourInstance = new LevelManager();
+    private static final String PLAYER = "P", BLOCK = "X";
 
     /*====================================*/
     /*---------------Fields---------------*/
@@ -19,6 +22,42 @@ public class LevelManager {
 
     public static void loadLevel(String levelIndex) {
         InstanceManager.clear();
+
+        try {
+            FileReader fileReader = new FileReader("src/resources/" + levelIndex + ".txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String levelInfo = bufferedReader.readLine();
+            bufferedReader.readLine();
+
+            String line;
+            int x = 0, y = 0;
+            while((line = bufferedReader.readLine()) != null) {
+                for(String symbol : line.substring(1).split("\\.")) {
+                    switch(symbol) {
+                        case PLAYER:
+                            Instance player = new Instance(x, y);
+                            player.setPlayer();
+                            InstanceManager.setPlayer(player);
+                            break;
+                        case BLOCK:
+                            Instance block = new Instance(x, y);
+                            block.setBlock();
+                            break;
+                    }
+                    x += 16;
+                }
+                x = 0;
+                y += 16;
+            }
+
+            // Always close files.
+            bufferedReader.close();
+        } catch(FileNotFoundException e) {
+            System.out.println("Open File Error: " + e.getMessage());
+        } catch(IOException e) {
+            System.out.println("Read File Error: " + e.getMessage());
+        }
     }
 
     public static int getWidth() {

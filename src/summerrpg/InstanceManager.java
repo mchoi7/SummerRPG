@@ -10,6 +10,7 @@ public class InstanceManager {
     /*====================================*/
     /*---------------Fields---------------*/
 
+    private Instance player;
     private final List<Instance> instanceList;
     private Instance[][] instanceArray;
 
@@ -19,6 +20,14 @@ public class InstanceManager {
     private InstanceManager() {
         instanceList = new ArrayList<>();
         instanceArray = new Instance[64][64];
+    }
+
+    public static Instance getPlayer() {
+        return res.player;
+    }
+
+    public static void setPlayer(Instance player) {
+        res.player = player;
     }
 
     public static void add(Instance instance) {
