@@ -1,6 +1,6 @@
 package summerrpg;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -80,5 +80,10 @@ public class InstanceManager {
                     res.instanceArray[x][y].render(g);
         for(Instance instance : res.instanceList)
             instance.render(g);
+
+        int textX = 10, textY = 20;
+        String information = "x: " + res.player.getX() + "\ny: " + res.player.getY() + "\ndx: " + res.player.getDx() + "\ndy: " + res.player.getDy();
+        for (String line : information.split("\n"))
+            g.drawString(line, textX, textY += g.getFontMetrics().getHeight());
     }
 }

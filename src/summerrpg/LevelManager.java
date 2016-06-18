@@ -42,7 +42,7 @@ public class LevelManager {
                             break;
                         case BLOCK:
                             Instance block = new Instance(x, y);
-                            block.setBlock();
+                            block.setHard();
                             break;
                     }
                     x += 16;
