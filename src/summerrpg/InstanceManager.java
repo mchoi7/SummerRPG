@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class InstanceManager {
+class InstanceManager {
     private static InstanceManager res = new InstanceManager();
 
     /*====================================*/
@@ -22,27 +22,27 @@ public class InstanceManager {
         instanceArray = new Instance[64][64];
     }
 
-    public static Instance getPlayer() {
+    static Instance getPlayer() {
         return res.player;
     }
 
-    public static void setPlayer(Instance player) {
+    static void setPlayer(Instance player) {
         res.player = player;
     }
 
-    public static void add(Instance instance) {
+    static void add(Instance instance) {
         res.instanceList.add(instance);
     }
 
-    public static void add(Instance instance, double x, double y) {
+    static void add(Instance instance, double x, double y) {
         res.instanceArray[(int) (x / 16)][(int) (y / 16)] = instance;
     }
 
-    public static boolean remove(Instance instance) {
+    static boolean remove(Instance instance) {
         return res.instanceList.remove(instance);
     }
 
-    public static boolean remove(Instance instance, double x, double y) {
+    static boolean remove(Instance instance, double x, double y) {
         int xIndex = (int) (x / 16);
         int yIndex = (int) (y / 16);
         if(res.instanceArray[xIndex][yIndex] != null) {
@@ -52,20 +52,20 @@ public class InstanceManager {
         return false;
     }
 
-    public static void clear() {
+    static void clear() {
         res.instanceList.clear();
     }
     
-    public static void update() {
+    static void update() {
         for(Instance instance : res.instanceList)
             instance.update();
     }
 
-    public static List<Instance> getInstanceList() {
+    static List<Instance> getInstanceList() {
         return res.instanceList;
     }
 
-    public static Instance getInstance(double x, double y) {
+    static Instance getInstance(double x, double y) {
         try {
             return res.instanceArray[(int) (x / 16)][(int) (y / 16)];
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -73,7 +73,7 @@ public class InstanceManager {
         }
     }
 
-    public static void render(Graphics g) {
+    static void render(Graphics g) {
         for(int y = 0; y < res.instanceArray.length; y++)
             for(int x = 0; x < res.instanceArray[0].length; x++)
                 if(res.instanceArray[x][y] != null)

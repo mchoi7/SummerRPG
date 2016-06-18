@@ -2,7 +2,7 @@ package summerrpg;
 
 import java.io.*;
 
-public class LevelManager {
+class LevelManager {
     private static LevelManager ourInstance = new LevelManager();
     private static final String PLAYER = "P", BLOCK = "X";
 
@@ -20,7 +20,7 @@ public class LevelManager {
     /*====================================*/
     /*--------------Accessor--------------*/
 
-    public static void loadLevel(String levelIndex) {
+    static void loadLevel(String levelIndex) {
         InstanceManager.clear();
 
         try {
@@ -60,11 +60,11 @@ public class LevelManager {
         }
     }
 
-    public static int getWidth() {
+    static int getWidth() {
         return 0;
     }
 
-    public static int getHeight() {
+    static int getHeight() {
         return 0;
     }
 }

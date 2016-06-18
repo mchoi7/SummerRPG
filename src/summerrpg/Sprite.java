@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class Sprite {
+class Sprite {
 
     /*====================================*/
     /*---------------Fields---------------*/
@@ -17,7 +17,7 @@ public class Sprite {
     /*====================================*/
     /*-------------Constructor------------*/
 
-    public Sprite(BufferedImage[] image) {
+    Sprite(BufferedImage[] image) {
         this.image = image;
         width = image[0].getWidth();
         height = image[0].getHeight();
@@ -29,7 +29,7 @@ public class Sprite {
     /*====================================*/
     /*--------------Actions---------------*/
 
-    public void paint(Graphics g, double x, double y, double imageXScale, double imageYScale, double imageIndex) {
+    void paint(Graphics g, double x, double y, double imageXScale, double imageYScale, double imageIndex) {
         Instance camera = InstanceManager.getPlayer();
         AffineTransform affineTransform = new AffineTransform(offset);
         affineTransform.translate(x - camera.getX() + GameFrame.WIDTH/2, y - camera.getY()+GameFrame.HEIGHT/2);

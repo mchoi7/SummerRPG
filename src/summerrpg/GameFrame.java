@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.*;
 
-public class GameFrame extends JFrame implements Runnable, KeyListener {
-    public static final int WIDTH = 960, HEIGHT = 640, FPS = 60;
+class GameFrame extends JFrame implements Runnable, KeyListener {
+    static final int WIDTH = 960, HEIGHT = 640, FPS = 60;
     private static final long targetTime = 1000 / FPS;
 
     /*====================================*/

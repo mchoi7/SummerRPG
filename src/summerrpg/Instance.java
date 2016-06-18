@@ -3,7 +3,7 @@ package summerrpg;
 import java.awt.Graphics;
 import static java.lang.Math.*;
 
-public class Instance {
+class Instance {
 
     /*====================================*/
     /*---------------Fields---------------*/
@@ -21,14 +21,14 @@ public class Instance {
     /*====================================*/
     /*-------------Constructor------------*/
 
-    public Instance(double x, double y) {
+    Instance(double x, double y) {
         this.x = x;
         this.y = y;
 
         InstanceManager.add(this);
     }
 
-    public void setBasic() {
+    void setBasic() {
         active = true;
         visible = true;
         solid = true;
@@ -45,7 +45,7 @@ public class Instance {
         weight = 1;
     }
 
-    public void setHard() {
+    void setHard() {
         setBasic();
 
         fixed = true;
@@ -53,14 +53,14 @@ public class Instance {
         InstanceManager.add(this, x, y);
     }
 
-    public void setSoft() {
+    void setSoft() {
         setBasic();
 
         mdx = 3;
         mdy = 3;
     }
 
-    public void setPlayer() {
+    void setPlayer() {
         setSoft();
 
         weight = 1;
@@ -73,7 +73,7 @@ public class Instance {
     /*====================================*/
     /*---------------Actions--------------*/
 
-    public void update() {
+    void update() {
         if(active) {
 
             // Apply Normal Acceleration
@@ -95,14 +95,14 @@ public class Instance {
         }
     }
 
-    public void render(Graphics g) {
+    void render(Graphics g) {
         if(visible) {
             Sprite sprite = SpriteManager.getSprite(spriteIndex);
             if(sprite != null) sprite.paint(g, x, y, imageXScale, imageYScale, imageIndex);
         }
     }
 
-    public void destroy() {
+    void destroy() {
         InstanceManager.remove(this);
     }
 
@@ -163,42 +163,42 @@ public class Instance {
     /*====================================*/
     /*--------------Accessor--------------*/
 
-    public double getX() {
+    double getX() {
         return x;
     }
 
-    public double getY() {
+    double getY() {
         return y;
     }
 
-    public double getDx() {
+    double getDx() {
         return dx;
     }
 
-    public double getDy() {
+    double getDy() {
         return dy;
     }
 
-    public double getWeight() {
+    double getWeight() {
         return weight;
     }
 
-    public double getDepth() {
+    double getDepth() {
         return depth;
     }
 
-    public double getWidth() {
+    double getWidth() {
         return width;
     }
 
-    public double getHeight() {
+    double getHeight() {
         return height;
     }
 
     /*====================================*/
     /*---------------Mutator--------------*/
 
-    public void setKey(boolean[] key) {
+    void setKey(boolean[] key) {
         this.key = key;
     }
 }

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpriteManager {
+class SpriteManager {
     private static SpriteManager res = new SpriteManager();
 
     /*====================================*/
@@ -43,7 +43,7 @@ public class SpriteManager {
     /*====================================*/
     /*--------------Accessor--------------*/
 
-    public static Sprite getSprite(String spriteIndex) {
+    static Sprite getSprite(String spriteIndex) {
         return res.spriteMap.get(spriteIndex);
     }
 }
